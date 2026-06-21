@@ -33,6 +33,7 @@ enum ToolName: String, CaseIterable, Sendable {
     case renameFolder = "rename_folder"
     case deleteMedia = "delete_media"
     case deleteFolder = "delete_folder"
+    case setProjectSettings = "set_project_settings"
 }
 
 struct AgentTool: @unchecked Sendable {
@@ -582,6 +583,17 @@ enum ToolDefinitions {
             inputSchema: objectSchema(
                 properties: [
                     "type": ["type": "string", "enum": ["video", "image", "audio", "upscale"], "description": "Filter by type. Omit to list all models."],
+                ]
+            )
+        ),
+        AgentTool(
+            name: .setProjectSettings,
+            description: "Change the project canvas resolution and/or frame rate. Use to switch aspect ratios (e.g. 1920x1080 for 16:9, 1080x1920 for 9:16 Reels/TikTok, 1080x1080 for square). Existing clip transforms are NOT auto-adjusted — refit them after changing.",
+            inputSchema: objectSchema(
+                properties: [
+                    "width": ["type": "integer", "description": "Canvas width in pixels (1–7680). Must be paired with height."],
+                    "height": ["type": "integer", "description": "Canvas height in pixels (1–7680). Must be paired with width."],
+                    "fps": ["type": "integer", "description": "Frame rate. Allowed: 24, 25, 30, 50, 60."],
                 ]
             )
         ),
