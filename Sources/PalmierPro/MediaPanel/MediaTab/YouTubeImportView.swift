@@ -55,15 +55,13 @@ struct YouTubeImportView: View {
         isDownloading = true
 
         Task {
-            await viewModel.importFromYouTube(urlString: url)
-            await MainActor.run {
-                isDownloading = false
-                if viewModel.youtubeImportError != nil {
-                    errorMessage = viewModel.youtubeImportError
-                } else {
-                    urlText = ""
-                    errorMessage = nil
-                }
+            let error = await viewModel.importFromYouTube(urlString: url)
+            isDownloading = false
+            if let error {
+                errorMessage = error
+            } else {
+                urlText = ""
+                errorMessage = nil
             }
         }
     }
