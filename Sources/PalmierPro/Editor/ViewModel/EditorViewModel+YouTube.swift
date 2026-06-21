@@ -2,11 +2,10 @@ import Foundation
 
 /// YouTube import integration — downloads via yt-dlp and adds to media library.
 extension EditorViewModel {
-    /// Error message from the last YouTube import attempt, cleared on success.
+    /// Downloads a YouTube video and imports it into the media library.
+    /// Returns nil on success, or an error message on failure.
     @MainActor
-    func importFromYouTube(urlString: String) async {
-        youtubeImportError = nil
-
+    func importFromYouTube(urlString: String) async -> String? {
         let downloadDir: URL
         if let projectURL {
             downloadDir = projectURL
@@ -23,8 +22,9 @@ extension EditorViewModel {
                 to: downloadDir
             )
             addMediaAsset(from: fileURL, folderId: mediaPanelCurrentFolderId)
+            return nil
         } catch {
-            youtubeImportError = error.localizedDescription
+            return error.localizedDescription
         }
     }
 }
