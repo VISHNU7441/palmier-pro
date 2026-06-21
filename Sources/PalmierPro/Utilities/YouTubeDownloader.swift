@@ -36,6 +36,7 @@ actor YouTubeDownloader {
     }
 
     /// Downloads a YouTube video and returns the local file URL.
+    /// Forces H.264 (avc1) codec — AV1 is not supported by macOS AVFoundation.
     func download(url: String, to directory: URL) async throws -> URL {
         guard isYouTubeURL(url) else { throw DownloadError.invalidURL }
 
@@ -48,8 +49,9 @@ actor YouTubeDownloader {
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: ytDlp)
+        // Force H.264 (avc1) — AV1/VP9 won't decode in AVFoundation on most Macs.
         process.arguments = [
-            "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "-f", "bestvideo[vcodec^=avc1]+bestaudio[ext=m4a]/best[vcodec^=avc1]/best[ext=mp4]",
             "--merge-output-format", "mp4",
             "--no-playlist",
             "--no-overwrites",
